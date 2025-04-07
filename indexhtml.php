@@ -15,55 +15,158 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['veg_id'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Market</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 16px;
+            background-color: #f5f5f5;
+        }
+
+        h1, h2 {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .products {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            justify-content: center;
+        }
+
+        .product {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            width: 220px;
+            padding: 16px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .product img {
+            width: 100%;
+            height: auto;
+            border-radius: 4px;
+            margin-bottom: 12px;
+        }
+
+        .product h5 {
+            margin: 0 0 8px;
+            font-size: 18px;
+        }
+
+        .product p {
+            margin: 0 0 12px;
+            color: #555;
+        }
+
+        .product input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .product button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .product button:hover {
+            background-color: #218838;
+        }
+
+        .cart {
+            margin-top: 40px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .cart ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .cart li {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .cart h4 {
+            margin-top: 20px;
+        }
+
+        .cart button {
+            margin-top: 16px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .cart button:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 
 <body>
-    <div class="container mt-3">
-        <h1 class="text-center">Vegetables</h1>
-        <div class="row">
-            <?php
-            $result = $conn->query("SELECT * FROM products");
-            while ($row = $result->fetch_assoc()) {
-                echo "<div class='col-md-3'>
-                        <div class='card'>
-                            <img src='images/{$row['image']}' class='card-img-top' alt='{$row['product_name']}'>
-                            <div class='card-body'>
-                                <h5 class='card-title'>{$row['product_name']}</h5>
-                                <p class='card-text'>₱{$row['price']}</p>
-                                <form method='POST'>
-                                    <input type='hidden' name='veg_id' value='{$row['id']}'>
-                                    <input type='number' name='quantity' class='form-control' value='1' min='1'>
-                                    <button type='submit' class='btn btn-success mt-2'>Add to Cart</button>
-                                </form>
-                            </div>
-                        </div>
-                      </div>";
-            }
-            ?>
-        </div>
+    <h1>Vegetables</h1>
+    <div class="products">
+        <?php
+        $result = $conn->query("SELECT * FROM products");
+        while ($row = $result->fetch_assoc()) {
+            echo "<div class='product'>
+                    <img src='images/{$row['image']}' alt='{$row['product_name']}'>
+                    <h5>{$row['product_name']}</h5>
+                    <p>₱{$row['price']}</p>
+                    <form method='POST'>
+                        <input type='hidden' name='veg_id' value='{$row['id']}'>
+                        <input type='number' name='quantity' value='1' min='1'>
+                        <button type='submit'>Add to Cart</button>
+                    </form>
+                  </div>";
+        }
+        ?>
+    </div>
 
-        <h2 class="mt-5">Shopping Cart</h2>
-        <div class="container cart">
-            <?php
-            $total_price = 0;
-            if (!empty($_SESSION['cart'])) {
-                echo "<ul class='list-group'>";
-                foreach ($_SESSION['cart'] as $id => $qty) {
-                    if ($row = $conn->query("SELECT product_name, price FROM products WHERE id = $id")->fetch_assoc()) {
-                        $total_price += $row['price'] * $qty;
-                        echo "<li class='list-group-item'>{$row['product_name']} - Qty: $qty - ₱" . number_format($row['price'] * $qty, 2) . "</li>";
-                    }
+    <div class="cart">
+        <h2>Shopping Cart</h2>
+        <?php
+        $total_price = 0;
+        if (!empty($_SESSION['cart'])) {
+            echo "<ul>";
+            foreach ($_SESSION['cart'] as $id => $qty) {
+                if ($row = $conn->query("SELECT product_name, price FROM products WHERE id = $id")->fetch_assoc()) {
+                    $total_price += $row['price'] * $qty;
+                    echo "<li>{$row['product_name']} - Qty: $qty - ₱" . number_format($row['price'] * $qty, 2) . "</li>";
                 }
-                echo "</ul><h4 class='mt-3'>Total: ₱" . number_format($total_price, 2) . "</h4>";
-            } else {
-                echo "<p>Your cart is empty.</p>";
             }
-            ?>
-            <form action="checkout2.php">
-                <button type="submit" class="btn btn-primary">Checkout</button>
-            </form>
-        </div>
+            echo "</ul><h4>Total: ₱" . number_format($total_price, 2) . "</h4>";
+        } else {
+            echo "<p>Your cart is empty.</p>";
+        }
+        ?>
+        <form action="checkout2.php">
+            <button type="submit">Checkout</button>
+        </form>
+    </div>
 </body>
 
 </html>
+
