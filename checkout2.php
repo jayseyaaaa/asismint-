@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_SESSION['cart'])) {
                       VALUES ('$u', '$c', '{$row['product_name']}', $qty, {$row['price']} * $qty)");
     }
     $_SESSION['cart'] = [];
-    echo "<script>alert('Order placed!'); window.location='index.php';</script>";
+    echo "<script>alert('Order placed!'); window.location='indexhtml.php';</script>";
 }
 ?>
 
