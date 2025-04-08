@@ -65,11 +65,14 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`id`, `product_name`, `qty`, `price`, `image`) VALUES
-(2, 'Carrot', 53, 20.00, 'carrot.jpg'),
-(3, 'Tomato', 104, 15.00, 'tomato.jpg'),
-(4, 'Squash', 31, 35.00, 'squash.jpg'),
-(5, 'Eggplant', 82, 25.00, 'potato.jpg');
-
+(2, 'Apple', 53, 20.00, 'apple.png'),
+(3, 'Banana', 104, 15.00, 'banana.png'),
+(4, 'Carrots', 31, 35.00, 'carrots.png'),
+(5, 'Durian', 82, 25.00, 'durian.png');
+(6, 'Melon', 00, 90.00, 'melon.png');
+(7, Orange', 00, 30.00, 'orange.png');
+(8, Papaya', 00, 80.00, 'papaya.png');
+(9, Strawberry', 00, 600.00, 'strawberry');
 --
 -- Indexes for dumped tables
 --
